@@ -20,6 +20,9 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'gender',
+        'instagram',
+        'mobile_number',
         'password',
     ];
 
@@ -44,5 +47,29 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function hobbies(){
+        return $this->belongsToMany(Hobby::class,'user_hobby',"user_id","hobby_id");
+    }
+
+    public function friends(){
+        return $this->belongsToMany(User::class,'friends','user_id','friend_id');
+    }
+
+    public function initiatedChats()
+    {
+        return $this->hasMany(Chat::class, 'first_user_id');
+    }
+
+    public function receivedChats()
+    {
+        return $this->hasMany(Chat::class, 'second_user_id');
+    }
+
+    public function allChats()
+    {
+        return Chat::where('first_user_id', $this->id)
+                   ->orWhere('second_user_id', $this->id);
     }
 }
